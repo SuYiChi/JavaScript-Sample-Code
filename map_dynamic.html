@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <title>Create Map and add a dynamic layer</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.28/esri/css/esri.css" />
+  <style>
+    html,
+    body,
+    #mapDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+  </style>
+  <script src="https://js.arcgis.com/3.28/"></script>
+  <script>
+    var map;
+
+    require([
+      "esri/map",
+      "esri/layers/ArcGISDynamicMapServiceLayer",
+      "esri/layers/ImageParameters",
+      "esri/layers/WMSLayer",
+      "esri/layers/WMSLayerInfo",
+      'esri/geometry/Extent'
+    ], function (
+      Map, ArcGISDynamicMapServiceLayer, ImageParameters, WMSLayer, WMSLayerInfo, Extent) {
+
+      map = new Map("mapDiv", {
+        basemap: "streets",
+        center: [121, 23],
+        zoom: 9
+      });
+
+      var imageParameters = new ImageParameters();
+      imageParameters.format = "jpeg"; //set the image type to PNG24, note default is PNG8.
+
+      //Takes a URL to a non cached map service.
+      var dynamicMapServiceLayer = new ArcGISDynamicMapServiceLayer(
+        "https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/Demographics/ESRI_Population_World/MapServer", {
+          "opacity": 0.5,
+          "imageParameters": imageParameters
+        });
+
+      //加入 WMS服務
+      // name & title 請參閱地圖服務所回傳的xml內容
+      var layer1 = new WMSLayerInfo({
+        name: 'CITY',
+        title: '縣市界'
+      });
+
+      // extent: 設定為全球範圍
+      // layerInfos: 設定要開啟的圖層
+      // version: 必須參閱地圖服務所支援的版本
+      var resourceInfo = {
+        extent: new Extent(-180, -90, 180, 90, {
+          wkid: 4326
+        }),
+        layerInfos: [layer1],
+        version: "1.1.1"
+      };
+
+      // 設定要呼叫的地圖服務網址
+      // visibleLayers: 參考 WMSLayerInfo中的 name屬性, 大小寫必須相同
+      var wmsLayer = new WMSLayer("http://maps.nlsc.gov.tw/S_Maps/wms", {
+        resourceInfo: resourceInfo,
+        visibleLayers: ['CITY']
+      });
+
+      //map.addLayer(dynamicMapServiceLayer);
+      map.addLayer(wmsLayer);
+
+
+    });
+  </script>
+</head>
+
+<body>
+  <div id="mapDiv"></div>
+</body>
+
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Document</title>
+</head>
+<body>
+<p id="test"></p>
+</body>
+
+<script>
+function getLocation()
+{
+if (navigator.geolocation)
+{
+navigator.geolocation.getCurrentPosition(showPosition, showError);
+}
+else
+{
+console.log("該瀏覽器不支援獲取地理位置。");
+}
+}
+function showPosition(position)
+{
+alert(position);
+}
+function showError(error) {
+console.log(error);
+}
+getLocation();
+</script>
+</html>
